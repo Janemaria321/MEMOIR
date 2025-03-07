@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Uploads - Memoir</title>
+    <style>
+        body {
+            font-family: 'Calibri', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #f0f8f0;
+            margin-bottom: 20px;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .options button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #dcdcdc;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .options button.active {
+            background-color: #b4b4b4;
+        }
+
+        .upload-section {
+            display: none;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .file-upload {
+            margin-bottom: 10px;
+        }
+
+        .add-more {
+            background-color: green;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .caption-box {
+            display: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            margin-top: 20px;
+        }
+
+        .upload-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            background-color: green;
+            color: white;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Menu styles */
+        .menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 16px;
+        }
+
+        .menu-button {
+            background-color: #dcdcdc;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .menu-dropdown a {
+            display: block;
+            padding: 8px 10px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .menu-dropdown a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .menu-button:hover + .menu-dropdown,
+        .menu-dropdown:hover {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Menu Button -->
+    <div class="menu">
+        <button class="menu-button">Menu</button>
+        <div class="menu-dropdown">
+            <a href="profilee.html">Profile</a>
+            <a href="#" onclick="logout()">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Select Upload Type</h2>
+
+        <!-- Search Bar -->
+        <input type="text" class="search-bar" placeholder="Search uploaded files..." id="searchBar">
+
+        <!-- Option Selection -->
+        <div class="options">
+            <button id="imageBtn">Images</button>
+            <button id="videoBtn">Videos</button>
+            <button id="notesBtn">Notes</button>
+        </div>
+
+        <!-- Image Upload Section -->
+        <div class="upload-section" id="imageSection">
+            <h3>Upload Images</h3>
+            <div id="imageUploads">
+                <input type="file" class="file-upload" accept="image/*">
+            </div>
+            <button class="add-more" onclick="addFileInput('imageUploads', 'image/*')">+</button>
+        </div>
+
+        <!-- Video Upload Section -->
+        <div class="upload-section" id="videoSection">
+            <h3>Upload Videos</h3>
+            <div id="videoUploads">
+                <input type="file" class="file-upload" accept="video/*">
+            </div>
+            <button class="add-more" onclick="addFileInput('videoUploads', 'video/*')">+</button>
+        </div>
+
+        <!-- Notes Upload Section -->
+        <div class="upload-section" id="notesSection">
+            <h3>Enter Notes</h3>
+            <div id="notesUploads">
+                <textarea class="file-upload" placeholder="Enter your note..."></textarea>
+            </div>
+            <button class="add-more" onclick="addTextInput('notesUploads')">+</button>
+        </div>
+
+        <!-- Unified Caption Box -->
+        <input type="text" class="caption-box" id="captionBox" placeholder="Enter a caption for your uploads...">
+
+        <!-- Upload Button -->
+        <button class="upload-btn" onclick="uploadFiles()">Upload</button>
+    </div>
+
+    <script>
+        // Elements
+        const imageSection = document.getElementById("imageSection");
+        const videoSection = document.getElementById("videoSection");
+        const notesSection = document.getElementById("notesSection");
+        const captionBox = document.getElementById("captionBox");
+
+        // Buttons
+        const imageBtn = document.getElementById("imageBtn");
+        const videoBtn = document.getElementById("videoBtn");
+        const notesBtn = document.getElementById("notesBtn");
+
+        // Toggle Section Visibility
+        function toggleSection(section, button) {
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+                button.classList.add("active");
+            } else {
+                section.style.display = "none";
+                button.classList.remove("active");
+            }
+            checkCaptionVisibility();
+        }
+
+        imageBtn.addEventListener("click", () => toggleSection(imageSection, imageBtn));
+        videoBtn.addEventListener("click", () => toggleSection(videoSection, videoBtn));
+        notesBtn.addEventListener("click", () => toggleSection(notesSection, notesBtn));
+
+        // Function to check if caption box should be visible
+        function checkCaptionVisibility() {
+            if (imageSection.style.display === "block" || videoSection.style.display === "block" || notesSection.style.display === "block") {
+                captionBox.style.display = "block";
+            } else {
+                captionBox.style.display = "none";
+            }
+        }
+
+        // Function to add more file inputs dynamically
+        function addFileInput(containerId, acceptType) {
+            const container = document.getElementById(containerId);
+            const input = document.createElement("input");
+            input.type = "file";
+            input.className = "file-upload";
+            input.accept = acceptType;
+            container.appendChild(input);
+        }
+
+        // Function to add more text inputs dynamically
+        function addTextInput(containerId) {
+            const container = document.getElementById(containerId);
+            const textarea = document.createElement("textarea");
+            textarea.className = "file-upload";
+            textarea.placeholder = "Enter another note...";
+            container.appendChild(textarea);
+        }
+
+        // Upload function placeholder
+        function uploadFiles() {
+            alert("Files uploaded successfully!");
+        }
+
+        // Logout function
+        function logout() {
+            // Clear any necessary session/localStorage data here (if any)
+            alert("You have logged out.");
+            window.location.href = "login.html"; // Redirect to login page after logout
+        }
+    </script>
+
+</body>
+</html>

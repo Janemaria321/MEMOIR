@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Memoir</title>
+    <style>
+        body {
+            font-family: 'Calibri', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .profile-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin: 100px auto;
+        }
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        .menu button {
+            width: 100%;
+            background-color: #ddd;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        .profile-toggle {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="profile-container">
+        <h2>Your Profile</h2>
+        <p><strong>Username:</strong> <span id="usernameDisplay"></span></p>
+        
+        <div class="profile-toggle" onclick="togglePrivacy()">
+            <span>Profile Privacy: <strong id="privacyStatus">Public</strong></span>
+        </div>
+        
+        <button onclick="selectPage()">Go to Uploads</button>
+        <button onclick="toggleMenu()">☰ Menu</button>
+    </div>
+
+    <div class="menu" id="menu">
+        <button onclick="goToProfile()">Profile</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const username = sessionStorage.getItem("username");
+            const password = sessionStorage.getItem("password");
+            const savedPrivacy = localStorage.getItem("profilePrivacy");
+            
+            if (username && password) {
+                document.getElementById("usernameDisplay").textContent = username;
+            } else {
+                alert("You must be logged in to view your profile.");
+                window.location.href = "loginn.html";
+            }
+
+            if (savedPrivacy === "Private") {
+                document.getElementById("privacyStatus").innerText = "Private";
+            } else {
+                document.getElementById("privacyStatus").innerText = "Public";
+            }
+        });
+
+        function selectPage() {
+            window.location.href = "select.html";
+        }
+
+        function goToProfile() {
+            window.location.href = "profilee.html";
+        }
+
+        function logout() {
+            sessionStorage.removeItem("username");
+            sessionStorage.removeItem("password");
+            window.location.href = "login.html";
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById("menu");
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+        }
+
+        function togglePrivacy() {
+            let privacyStatus = document.getElementById("privacyStatus");
+            
+            if (privacyStatus.innerText === "Public") {
+                privacyStatus.innerText = "Private";
+                localStorage.setItem("profilePrivacy", "Private");
+            } else {
+                privacyStatus.innerText = "Public";
+                localStorage.setItem("profilePrivacy", "Public");
+            }
+        }
+    </script>
+
+</body>
+</html>
